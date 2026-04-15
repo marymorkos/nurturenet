@@ -1,284 +1,201 @@
-# NurtureNet 2.0
-### Dual-Architecture Agentic Maternal Triage for Community Health Workers
-
-**Vanderbilt University — DS 5690: Gen AI Models in Theory & Practice, Spring 2026**
-**Mary Morkos** | MS Data Science (Health Informatics) | mary.morkos@vanderbilt.edu
+# Scaling Laws for Neural Language Models
+**Kaplan, J., McCandlish, S., Henighan, T., Brown, T. B., Chess, B., Child, R., Gray, S., Radford, A., Wu, J., & Amodei, D. (2020)**  
+*OpenAI — arXiv:2001.08361*
 
 ---
 
-## Research Question
+## Overview
 
-**Can a dual-architecture agentic system — combining a quantized small language model running locally with a cloud-based constitutional AI reviewer — improve equitable preeclampsia risk detection for community health workers serving rural women between clinic visits?**
+This paper investigates how the performance of Transformer-based language models depends on three key factors:
 
----
+- **N** — Number of model parameters (excluding embeddings)
+- **D** — Dataset size in tokens
+- **C** — Compute budget used during training (measured in PF-days)
 
-## The Problem
+The central finding: **performance follows smooth power-law relationships with each of these factors, spanning over seven orders of magnitude.** Architectural details like depth vs. width matter very little — scale is what drives improvement.
 
-Over 2.3 million US women live in maternity care deserts where the nearest obstetric provider is more than 38 minutes away (March of Dimes, 2024). Preeclampsia affects approximately 8% of all US deliveries and is present in nearly one in three maternal deaths during delivery hospitalization (Ford et al., 2022; Fink et al., 2023). Current ACOG screening detects only 61.5% of preterm preeclampsia cases (Guerby et al., 2024), and 84% of pregnancy-related deaths are preventable (Trost et al., 2022).
+The most influential practical conclusion: **when given a fixed compute budget, you should train a much larger model and stop early, rather than training a smaller model to convergence.**
 
-The mortality gap is not distributed equally. In 2024, non-Hispanic Black women died from maternal causes at a rate of 44.8 per 100,000 live births compared to 14.2 for non-Hispanic White women — a ratio of 3.15 to 1 (Hoyert, 2026). Preeclampsia and eclampsia mortality rates are approximately five times higher for Black women than White women (Ramos et al., 2021).
-
-**The core problem is architectural.** Prenatal care is organized around the clinic visit as the unit of detection — but preeclampsia develops and kills between visits. Community health workers (CHWs) are the only people who actually reach rural women in that gap. They live in the community. They make home visits. They have smartphones. Zero published AI systems have been built specifically for CHWs conducting between-visit maternal health monitoring.
-
-NurtureNet 2.0 is built for them.
+This paper directly informed the scaling strategy behind GPT-3 and subsequent large language models.
 
 ---
 
-## Who This Tool Serves
+## Architecture Overview (Pseudocode)
 
-**Community health workers** — not physicians, not patients directly. CHWs are trained community members who conduct home visits, check in on patients between clinic appointments, and serve as the bridge between rural pregnant women and the healthcare system. They need one thing: a clear answer about whether a patient is okay, or whether she needs to get to a doctor right now. NurtureNet gives them that answer plus the exact words to say to the patient.
-
----
-
-## Architecture
+This paper does not introduce a new model architecture. Instead, it introduces a **scaling law framework** — a predictive system for language model performance. Below is a formal pseudocode representation of the framework.
 
 ```
-CHW enters patient vitals + SDOH during home visit
-                    |
-                    v
-      Layer 1: Phi-4-mini (local, no internet)
-      3.8B parameters, 4-bit quantized via Ollama
-      Chain-of-thought ACOG clinical reasoning
-      Outputs: risk level + confidence + CHW action
-                    |
-          __________|__________
-         |                     |
-    Low risk +            Moderate/High OR
-    high confidence       confidence < 0.7 OR
-    (stay on device)      SDOH burden >= 7 OR
-                          BP >= 140/90
-                               |
-                               v
-              Layer 2: Claude + NurtureNet CHW Skill
-              Constitutional review of Layer 1 reasoning
-              SDOH Composite Burden Index
-              Equity flag for patients of color
-              CHW action with specific timeline
-              Plain-language patient script
-              Clinician handoff document
+# ============================================================
+# SCALING LAWS FRAMEWORK — Kaplan et al. (2020)
+# ============================================================
+
+# --- INPUTS ---
+N  ← number of non-embedding model parameters
+D  ← dataset size in tokens
+C  ← total training compute (PF-days), where C ≈ 6 * N * B * S
+     (B = batch size, S = training steps)
+
+# --- CORE POWER LAW EQUATIONS ---
+
+# Loss as a function of model size (trained to convergence, infinite data)
+L(N) = (Nc / N)^αN
+    where αN ≈ 0.076,  Nc ≈ 8.8e13 parameters
+
+# Loss as a function of dataset size (large model, early stopping)
+L(D) = (Dc / D)^αD
+    where αD ≈ 0.095,  Dc ≈ 5.4e13 tokens
+
+# Loss as a function of compute (optimally allocated)
+L(Cmin) = (Cmin_c / Cmin)^αCmin
+    where αCmin ≈ 0.050,  Cmin_c ≈ 3.1e8 PF-days
+
+# --- JOINT SCALING LAW (N and D together) ---
+L(N, D) = [ (Nc/N)^(αN/αD) + (Dc/D) ]^αD
+    # When D → ∞, this reduces to L(N)
+    # When N → ∞, this reduces to L(D)
+
+# --- TRAINING CURVE SCALING (N and training steps S) ---
+L(N, S) = (Nc/N)^αN + (Sc/Smin)^αS
+    where αS ≈ 0.76,  Sc ≈ 2.1e3 steps
+
+# --- OPTIMAL COMPUTE ALLOCATION ---
+# Given a fixed budget Cmin, solve for optimal N, B, S:
+
+FUNCTION optimal_allocation(Cmin):
+    N_opt  ∝ Cmin^0.73   # Model size grows fastest
+    B_opt  ∝ Cmin^0.24   # Batch size grows moderately  
+    S_opt  ∝ Cmin^0.03   # Training steps barely change
+
+    RETURN N_opt, B_opt, S_opt
+
+# KEY INSIGHT: As compute increases, spend it on BIGGER MODELS
+# not more training steps. Stop training significantly before convergence.
+
+# --- CRITICAL BATCH SIZE ---
+Bcrit(L) = B* / L^(1/αB)
+    where B* ≈ 2e8 tokens,  αB ≈ 0.21
+    # Bcrit depends only on loss, not model size
+
+# --- OVERFITTING CONDITION ---
+# To avoid overfitting when scaling model size:
+D ≳ (5e3) * N^0.74
+    # Dataset only needs to grow sublinearly with model size
+
+# --- EXPERIMENTAL METHODOLOGY ---
+FOR each scale factor X in {N, D, C}:
+    fix the other two factors
+    train models across 6-8 orders of magnitude of X
+    measure cross-entropy loss L on WebText2 test set
+    fit power-law: L(X) = (Xc / X)^αX
+    verify trend holds across all scales
+
+# --- ARCHITECTURE TESTED ---
+Model: Decoder-only Transformer (GPT-style)
+       [VSP+17, same as GPT-2 architecture]
+Optimizer: Adam (small models), Adafactor (>1B params)
+Context: 1024 tokens
+Dataset: WebText2 (22B tokens, web text filtered by Reddit karma)
+Models: 768 params → 1.5 billion params
 ```
 
-**Why two layers?**
+### How This Differs from Prior Work
 
-Phi-4-mini runs on any phone, requires no internet, and protects patient privacy — data never leaves the device for low-risk cases. Claude handles the high-stakes reasoning where constitutional safety principles, equity analysis, and clinical nuance matter most. The architecture matches computational resources to clinical stakes.
-
-**Why Phi-4-mini specifically?**
-
-Three reasons grounded in course content:
-
-1. **Scaling laws (Kaplan et al., 2020):** Loss scales as a power law with model size. A large pretrained model quantized for edge deployment outperforms a smaller model trained from scratch on limited data. Phi-4-mini was pretrained by Microsoft on 5 trillion tokens — we get that knowledge for free and add clinical reasoning on top.
-
-2. **HealthSLM-Bench (Wang et al., 2025):** The only benchmark specifically evaluating small language models for mobile health monitoring found Phi-family models among the top performers, achieving comparable accuracy to models 17x larger at 16x faster inference on mobile hardware.
-
-3. **Deployment reality:** Phi-4-mini at Q4_K_M quantization fits in 2.4GB and runs at 20-35 tokens per second on a MacBook Air M1 — the same hardware profile as a mid-range Android phone. A CHW in a rural county has a phone, not a server. Phi-4-mini runs on that phone.
-
----
-
-## Course Connections
-
-| Concept | Implementation |
-|---|---|
-| DInference (Algorithm 14, Phuong & Hutter 2022) | Phi-4-mini local triage — decoder generates risk assessment token by token |
-| DInference (Algorithm 14, Phuong & Hutter 2022) | Claude constitutional review — same algorithm, cloud scale, equity reasoning |
-| Scaling laws (Kaplan et al. 2020) | Quantized large model beats small model from scratch; early stopping; small head |
-| Constitutional AI (Anthropic 2022) | 7 explicit clinical safety principles checked against every output |
-| Chain-of-thought prompting | Phi-4-mini forced to reason step by step before concluding |
-| Claude Skills | NurtureNet CHW Skill encodes complete clinical protocol in SKILL.md |
-| Two-model comparison | Same DInference algorithm at two scales — first empirical comparison for maternal health equity |
-
----
-
-## NurtureNet SDOH Composite Burden Index
-
-Original contribution. Weights grounded in published epidemiological effect sizes:
-
-```python
-sdoh_burden = (
-    food_insecure          * 2 +  # Blumenshine et al. 2010 — OR 2.0 gestational diabetes
-    housing_instability    * 2 +  # AHRQ 2020 — cortisol elevation raises BP
-    late_prenatal_care     * 3 +  # Trost et al. 2022 — strongest missed detection predictor
-    rural                  * 1 +  # Ford et al. 2022 — limited MFM specialist access
-    (insurance == 'Uninsured')       * 3 +  # KFF 2023 — 3x late diagnosis risk
-    (insurance == 'Medicaid / CHIP') * 1 +
-    (race == 'Non-Hispanic Black')   * 2    # Hoyert 2026 — 3.15x mortality ratio
-)
-```
-
-Score interpretation: 0-3 Low | 4-6 Moderate | 7-9 High | 10+ Critical
-
----
-
-## Constitutional Principles
-
-Seven explicit safety rules the Claude review layer checks against every output:
-
-1. NEVER assess low risk when BP >= 140/90 mmHg
-2. Prior preeclampsia + ANY BP elevation = minimum moderate risk, always
-3. SDOH burden >= 7 must be explicitly flagged in CHW guidance
-4. Non-Hispanic Black patients: heightened vigilance at ALL thresholds (3.15x mortality, Hoyert 2026)
-5. Confidence < 0.7 on moderate/high assessment = escalate, never reassure
-6. Every output must give the CHW a specific action with a timeline
-7. Never use language that could discourage the patient from seeking care
-
----
-
-## Evaluation Results
-
-**20 patient vignettes** with ACOG-grounded ground truth labels.
-Distribution: 8 high risk, 6 moderate risk, 6 low risk.
-Demographics: 6 Non-Hispanic Black, 4 Hispanic, 6 White, 2 Asian, 2 AIAN.
-
-### High-risk recall
-
-| Model | Overall | Non-Hispanic Black | Hispanic | White | AIAN |
-|---|---|---|---|---|---|
-| Phi-4-mini (no SDOH) | 100% | 100% | 100% | 100% | 100% |
-| Phi-4-mini (w/ SDOH) | 88% | **80%** | 100% | 100% | 100% |
-| After constitutional review | **100%** | **100%** | 100% | 100% | 100% |
-
-### Key findings
-
-**Finding 1: Adding SDOH context to the local model hurt recall for Black patients.**
-Phi-4-mini with SDOH performed worse on Black high-risk patients (80%) than without SDOH context (100%). Adding social information confused the local model on 1 of 5 Black high-risk cases. The constitutional review caught and corrected this, restoring 100% recall. This is a concrete demonstration of why a safety review layer is necessary — the local model cannot reliably integrate equity-relevant social context.
-
-**Finding 2: Constitutional violations were concentrated in patients of color.**
-9 of 20 cases triggered constitutional violations. 8 of those 9 were patients of color. This is not random — it reflects Phi-4-mini's consistent underweighting of social context and equity considerations even when that context was explicitly provided. Principles 3 and 4 (SDOH burden flagging and heightened Black patient vigilance) were the most frequently violated.
-
-**Finding 3: The review layer upgraded 4 cases that the local model underestimated.**
-4 patients received higher risk assessments after constitutional review than the local model assigned. All 4 were patients of color with elevated SDOH burden. These are the cases where the dual-architecture system changed the clinical outcome.
-
-**Finding 4: 15 equity flags were raised that the local model did not generate.**
-The constitutional review raised equity flags in 15 of 20 cases — providing CHWs with specific equity-aware guidance that Phi-4-mini alone never produced.
-
-### Constitutional violations by case
-
-| Case | Race/Ethnicity | Principles Violated |
+| Aspect | Prior Assumption | Kaplan et al. Finding |
 |---|---|---|
-| 1 | Non-Hispanic Black | 3, 4 |
-| 4 | Non-Hispanic Black | 3, 4 |
-| 6 | Non-Hispanic Black | 1 |
-| 8 | Non-Hispanic Black | 3, 4, 6 |
-| 9 | Hispanic or Latina | 3, 6 |
-| 10 | Non-Hispanic Black | 3, 4, 5 |
-| 12 | Non-Hispanic Black | 3, 4 |
-| 14 | Non-Hispanic Black | 3, 4, 5 |
-| 19 | Non-Hispanic Black | 4 |
+| Architecture shape | Depth/width matter significantly | Minimal effect when N is fixed |
+| Training strategy | Train small models to convergence | Train large models, stop early |
+| Data scaling | Linear with model size | Sublinear: D ∝ N^0.74 |
+| Performance prediction | Hard to predict | Predictable power laws |
+| Optimal compute use | Unclear | Spend on model size, not steps |
 
 ---
 
-## Example Output — Case 1
+## Critical Analysis
 
-**Patient:** 32 weeks, BP 158/102, severe headache, visual disturbances, prior preeclampsia.
-Non-Hispanic Black, uninsured, rural, food insecure, housing instability, no prenatal care. SDOH burden 11/14.
+### What the paper does well
+- Massive empirical scope — hundreds of training runs across 8 orders of magnitude
+- Power-law fits are remarkably clean and consistent
+- Practical, actionable conclusions for compute allocation
 
-**Phi-4-mini:** HIGH, 90% confidence
+### Limitations and open questions
 
-**After constitutional review:**
-- Risk: HIGH (unchanged)
-- Equity flag: Non-Hispanic Black patient with critical SDOH burden (11/14) including uninsured status and rural location — heightened vigilance required per 3.15x mortality risk
-- CHW action: Call 911 immediately for emergency transport. Do not delay for patient to arrange own transport. Stay with patient until EMS arrives. Call receiving hospital to report incoming preeclampsia with severe features.
-- What to say: "Your blood pressure is very high and you have warning signs that need immediate medical attention. I'm calling 911 right now to get you to the hospital safely. This is about keeping you and your baby healthy — the doctors need to see you today."
+**1. No theoretical foundation**  
+The authors explicitly admit they have no deep theory for *why* these power laws exist. They describe it as analogous to empirical gas laws before thermodynamics existed. Without theory, we don't know when or why the laws might break down.
+
+**2. Single architecture, single dataset**  
+All experiments use decoder-only Transformers on WebText2. It's unclear whether the exact exponents transfer to other architectures (BERT-style encoders, diffusion models, MoE models) or other data domains (code, images, clinical text).
+
+**3. The Chinchilla correction (2022)**  
+Hoffmann et al. (DeepMind, 2022) reran scaling law experiments with better-controlled methodology and found that Kaplan et al. *underestimated* the importance of data*. The original paper suggested training very large models on relatively little data. Chinchilla showed that **model size and data should scale equally** — a significant correction that changed how GPT-4 and subsequent models were trained.
+
+**4. Environmental costs not addressed**  
+The paper advocates for ever-larger models but does not address the environmental cost of training at scale. A single large training run can emit CO2 equivalent to multiple transatlantic flights. As scaling laws encourage bigger models, this becomes a serious omission.
+
+**5. Emergent capabilities not predicted**  
+The smooth power-law framing misses a phenomenon discovered later: at certain scale thresholds, models suddenly gain qualitatively new capabilities (Wei et al., 2022). Power laws suggest smooth, predictable improvement — but emergence is discontinuous and was not anticipated here.
+
+**6. Fixed tokenization and vocabulary**  
+The authors note that constants like Nc and Dc depend on vocabulary size and tokenization and "have no fundamental meaning." This limits the generalizability of the precise numerical values.
 
 ---
 
-## Limitations
+## Impact
 
-- 20 vignettes is a proof-of-concept evaluation set, not a statistically powered clinical validation study
-- Phi-4-mini can hallucinate — the constitutional review layer mitigates but does not eliminate this risk
-- Ground truth labels are ACOG-based but assigned by the researcher, not clinicians
-- No real CHW user testing — the interface has not been evaluated for usability or comprehension
-- Not validated on real patient data — all vignettes are synthetic
-- No IRB approval — real patient data requires institutional review board oversight
-- Not FDA cleared
+### Immediate impact (2020)
+- **Directly motivated GPT-3** (Brown et al., 2020) — 175B parameters, trained the same year
+- Gave AI labs a **quantitative roadmap** for compute allocation
+- Shifted the field from "train to convergence" to "train large, stop early"
+- Established that **architecture tweaks matter far less than scale**
+
+### Medium-term impact
+- Inspired **Chinchilla (2022)** which corrected the data/model balance
+- Motivated research into **compute-optimal training**
+- Influenced investment decisions — if performance is predictable, ROI on compute is predictable
+- Sparked debate about whether scale is the only path forward
+
+### Present and future
+- Scaling laws have been extended to **multimodal models**, **code**, and **reasoning tasks**
+- The paper's framework is now standard vocabulary in ML research
+- **Efficiency research** (LoRA, quantization, MoE, Mamba) is partly a response to the environmental and financial costs of the scaling-first strategy this paper advocates
+- The question of whether scaling laws hold indefinitely — or whether we need architectural innovation — is one of the most active debates in AI today
 
 ---
 
-## Setup
+## Two Discussion Questions
 
-```bash
-# 1. Install Ollama and pull Phi-4-mini
-brew install ollama
-ollama serve
-ollama pull phi4-mini
+**Question 1:**  
+The paper shows that for a fixed compute budget, you should train a much larger model and stop early rather than training a smaller model to convergence. Why do you think most practitioners *before* this paper were doing the opposite — and what would have to change in your own workflow or intuitions to adopt the compute-efficient approach?
 
-# 2. Install Python dependencies
-pip install -r requirements.txt
+**Question 2:**  
+Chinchilla (2022) found that Kaplan et al. underweighted the importance of training data — suggesting models like GPT-3 were undertrained relative to their size. Given that both papers use empirical power-law fitting on Transformers, what does it tell us about relying on empirical scaling laws without theoretical foundations?
 
-# 3. Set Anthropic API key
-export ANTHROPIC_API_KEY=your_key_here
+---
 
-# 4. Run the demo case (Case 1 — high-risk Black patient, SDOH burden 11)
-python evaluate.py --case 1
+## Resource Links
 
-# 5. Run full evaluation (all 20 vignettes, ~15 minutes)
-python evaluate.py
+1. **Original Paper** — https://arxiv.org/abs/2001.08361
+2. **Chinchilla Scaling Laws (DeepMind, 2022)** — https://arxiv.org/abs/2203.15556 *(the key correction to this paper)*
+3. **GPT-3 Paper (direct application of these laws)** — https://arxiv.org/abs/2005.14165
+4. **Emergent Abilities of Large Language Models (Wei et al., 2022)** — https://arxiv.org/abs/2206.07682 *(what scaling laws missed)*
+5. **The FLOPs Calculator — Understanding Compute** — https://github.com/google-research/google-research/tree/master/scaling_transformer_inference_efficiency
 
-# 6. Run local model only (no API key needed)
-python evaluate.py --no-review
+---
 
-# 7. Launch CHW Streamlit app
-streamlit run app.py
+## Code Demonstration
+
+See `scaling_demo.py` — a Python script that empirically demonstrates the power-law relationship between model size and loss, and visualizes the compute-efficient frontier.
+
+---
+
+## Citation
+
+```
+@article{kaplan2020scaling,
+  title={Scaling Laws for Neural Language Models},
+  author={Kaplan, Jared and McCandlish, Sam and Henighan, Tom and Brown, Tom B and Chess, Benjamin and Child, Rewon and Gray, Scott and Radford, Alec and Wu, Jeffrey and Amodei, Dario},
+  journal={arXiv preprint arXiv:2001.08361},
+  year={2020}
+}
 ```
 
----
-
-## Repository Structure
-
-```
-nurturenet2/
-├── evaluate.py              # Main evaluation harness — run this
-├── app.py                   # Streamlit CHW interface
-├── data/
-│   └── vignettes.json       # 20 patient vignettes with ground truth
-├── skill/
-│   └── SKILL.md             # NurtureNet CHW Skill (Claude Skills format)
-├── results/                 # Evaluation outputs (JSON)
-├── requirements.txt
-└── README.md
-```
-
----
-
-## Roadmap
-
-1. **WhatsApp interface** — CHW texts patient info, NurtureNet responds in plain language. Works on any phone, no app install, 2G cellular. Twilio WhatsApp API.
-2. **Expanded vignette set** — 70+ cases for statistically meaningful equity analysis
-3. **QLoRA fine-tuning** — adapt Phi-4-mini on clinical vignettes using MLX on MacBook Air
-4. **VUMC retrospective validation** — Vanderbilt CTSA IRB pathway for real EHR data
-5. **CMS UDS SDOH integration** — use real measured SDOH data from Federally Qualified Health Centers
-
----
-
-## References
-
-**Course papers:**
-- Phuong, M. & Hutter, M. (2022). Formal Algorithms for Transformers. arXiv:2207.09238
-- Kaplan, J. et al. (2020). Scaling Laws for Neural Language Models. arXiv:2001.08361
-
-**Maternal mortality and disparity:**
-- Hoyert, D.L. (2026). Maternal Mortality Rates in the United States, 2024. doi:10.15620/cdc/174651
-- Trost, S.L. et al. (2022). Pregnancy-Related Deaths: Data from MMRCs in 36 US States. CDC.
-- Petersen, E.E. et al. (2019). Racial/Ethnic Disparities in Pregnancy-Related Deaths. MMWR 68(35). doi:10.15585/mmwr.mm6835a3
-- Ramos, I.G. et al. (2021). Racial and Ethnic Disparities in Maternal Mortality. AJPH 111(9). doi:10.2105/AJPH.2021.306375
-- Ford, N.D. et al. (2022). Hypertensive Disorders in Pregnancy and Mortality. MMWR 71(17). doi:10.15585/mmwr.mm7117a1
-- Fink, D.A. et al. (2023). Trends in Maternal Mortality. JAMA Network Open 6(6). doi:10.1001/jamanetworkopen.2023.17641
-
-**Preeclampsia detection:**
-- Guerby, P. et al. (2024). PREDICTION Study. Hypertension 81(7). doi:10.1161/HYPERTENSIONAHA.123.22584
-- March of Dimes (2024). Maternity Care Deserts Report.
-
-**Edge AI and small models:**
-- Wang, Y. et al. (2025). HealthSLM-Bench. arXiv:2509.07260
-- Microsoft (2025). Phi-4-mini technical report. azure.microsoft.com
-
-**Responsible AI:**
-- Obermeyer, Z. et al. (2019). Dissecting Racial Bias in an Algorithm. Science 366(6464). doi:10.1126/science.aax2342
-- Anthropic (2022). Constitutional AI: Harmlessness from AI Feedback.
-
----
-
-*NurtureNet 2.0 is a research prototype developed for DS 5690 at Vanderbilt University.
-Not FDA cleared. Not a substitute for clinical judgment or physician oversight.
-All outputs are advisory only.*
-
-*Author: Mary Morkos, MS Data Science (Health Informatics), Vanderbilt University, May 2026*
+Kaplan, J., McCandlish, S., Henighan, T., Brown, T. B., Chess, B., Child, R., Gray, S., Radford, A., Wu, J., & Amodei, D. (2020). *Scaling Laws for Neural Language Models*. arXiv:2001.08361.
