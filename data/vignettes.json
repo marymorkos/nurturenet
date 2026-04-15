@@ -1,0 +1,382 @@
+[
+  {
+    "id": 1,
+    "gestational_age_weeks": 32,
+    "systolic_bp": 158,
+    "diastolic_bp": 102,
+    "heart_rate": 88,
+    "symptoms": ["severe headache", "visual disturbances", "facial edema"],
+    "prior_preeclampsia": true,
+    "ground_truth": "high",
+    "sdoh": {
+      "race_ethnicity": "Non-Hispanic Black",
+      "insurance": "Uninsured",
+      "food_insecure": true,
+      "rural": true,
+      "housing_instability": true,
+      "late_prenatal_care": true,
+      "sdoh_burden": 11
+    }
+  },
+  {
+    "id": 2,
+    "gestational_age_weeks": 28,
+    "systolic_bp": 165,
+    "diastolic_bp": 112,
+    "heart_rate": 94,
+    "symptoms": ["severe headache", "epigastric pain", "visual disturbances"],
+    "prior_preeclampsia": false,
+    "ground_truth": "high",
+    "sdoh": {
+      "race_ethnicity": "Non-Hispanic Black",
+      "insurance": "Medicaid / CHIP",
+      "food_insecure": true,
+      "rural": false,
+      "housing_instability": true,
+      "late_prenatal_care": true,
+      "sdoh_burden": 9
+    }
+  },
+  {
+    "id": 3,
+    "gestational_age_weeks": 36,
+    "systolic_bp": 172,
+    "diastolic_bp": 115,
+    "heart_rate": 98,
+    "symptoms": ["severe headache", "visual disturbances", "epigastric pain", "facial edema"],
+    "prior_preeclampsia": true,
+    "ground_truth": "high",
+    "sdoh": {
+      "race_ethnicity": "Hispanic or Latina",
+      "insurance": "Uninsured",
+      "food_insecure": true,
+      "rural": true,
+      "housing_instability": false,
+      "late_prenatal_care": true,
+      "sdoh_burden": 9
+    }
+  },
+  {
+    "id": 4,
+    "gestational_age_weeks": 30,
+    "systolic_bp": 162,
+    "diastolic_bp": 108,
+    "heart_rate": 92,
+    "symptoms": ["severe headache", "facial edema"],
+    "prior_preeclampsia": false,
+    "ground_truth": "high",
+    "sdoh": {
+      "race_ethnicity": "Non-Hispanic Black",
+      "insurance": "Uninsured",
+      "food_insecure": false,
+      "rural": true,
+      "housing_instability": false,
+      "late_prenatal_care": false,
+      "sdoh_burden": 6
+    }
+  },
+  {
+    "id": 5,
+    "gestational_age_weeks": 34,
+    "systolic_bp": 168,
+    "diastolic_bp": 114,
+    "heart_rate": 96,
+    "symptoms": ["severe headache", "visual disturbances"],
+    "prior_preeclampsia": true,
+    "ground_truth": "high",
+    "sdoh": {
+      "race_ethnicity": "Non-Hispanic White",
+      "insurance": "Private insurance",
+      "food_insecure": false,
+      "rural": false,
+      "housing_instability": false,
+      "late_prenatal_care": false,
+      "sdoh_burden": 0
+    }
+  },
+  {
+    "id": 6,
+    "gestational_age_weeks": 26,
+    "systolic_bp": 155,
+    "diastolic_bp": 100,
+    "heart_rate": 86,
+    "symptoms": ["severe headache"],
+    "prior_preeclampsia": true,
+    "ground_truth": "high",
+    "sdoh": {
+      "race_ethnicity": "Non-Hispanic Black",
+      "insurance": "Medicaid / CHIP",
+      "food_insecure": true,
+      "rural": true,
+      "housing_instability": true,
+      "late_prenatal_care": true,
+      "sdoh_burden": 11
+    }
+  },
+  {
+    "id": 7,
+    "gestational_age_weeks": 38,
+    "systolic_bp": 160,
+    "diastolic_bp": 105,
+    "heart_rate": 90,
+    "symptoms": ["epigastric pain", "facial edema"],
+    "prior_preeclampsia": false,
+    "ground_truth": "high",
+    "sdoh": {
+      "race_ethnicity": "American Indian or Alaska Native",
+      "insurance": "Medicaid / CHIP",
+      "food_insecure": true,
+      "rural": true,
+      "housing_instability": true,
+      "late_prenatal_care": false,
+      "sdoh_burden": 7
+    }
+  },
+  {
+    "id": 8,
+    "gestational_age_weeks": 28,
+    "systolic_bp": 142,
+    "diastolic_bp": 92,
+    "heart_rate": 82,
+    "symptoms": ["mild headache"],
+    "prior_preeclampsia": false,
+    "ground_truth": "moderate",
+    "sdoh": {
+      "race_ethnicity": "Non-Hispanic Black",
+      "insurance": "Uninsured",
+      "food_insecure": true,
+      "rural": true,
+      "housing_instability": true,
+      "late_prenatal_care": true,
+      "sdoh_burden": 11
+    }
+  },
+  {
+    "id": 9,
+    "gestational_age_weeks": 28,
+    "systolic_bp": 138,
+    "diastolic_bp": 89,
+    "heart_rate": 80,
+    "symptoms": ["mild headache", "ankle swelling"],
+    "prior_preeclampsia": false,
+    "ground_truth": "moderate",
+    "sdoh": {
+      "race_ethnicity": "Hispanic or Latina",
+      "insurance": "Uninsured",
+      "food_insecure": true,
+      "rural": false,
+      "housing_instability": true,
+      "late_prenatal_care": true,
+      "sdoh_burden": 8
+    }
+  },
+  {
+    "id": 10,
+    "gestational_age_weeks": 32,
+    "systolic_bp": 144,
+    "diastolic_bp": 93,
+    "heart_rate": 84,
+    "symptoms": ["mild headache"],
+    "prior_preeclampsia": true,
+    "ground_truth": "high",
+    "sdoh": {
+      "race_ethnicity": "Non-Hispanic Black",
+      "insurance": "Medicaid / CHIP",
+      "food_insecure": false,
+      "rural": true,
+      "housing_instability": false,
+      "late_prenatal_care": false,
+      "sdoh_burden": 5
+    }
+  },
+  {
+    "id": 11,
+    "gestational_age_weeks": 30,
+    "systolic_bp": 141,
+    "diastolic_bp": 91,
+    "heart_rate": 78,
+    "symptoms": ["ankle swelling"],
+    "prior_preeclampsia": false,
+    "ground_truth": "moderate",
+    "sdoh": {
+      "race_ethnicity": "Non-Hispanic White",
+      "insurance": "Private insurance",
+      "food_insecure": false,
+      "rural": false,
+      "housing_instability": false,
+      "late_prenatal_care": false,
+      "sdoh_burden": 0
+    }
+  },
+  {
+    "id": 12,
+    "gestational_age_weeks": 26,
+    "systolic_bp": 136,
+    "diastolic_bp": 88,
+    "heart_rate": 76,
+    "symptoms": ["mild headache", "facial edema"],
+    "prior_preeclampsia": false,
+    "ground_truth": "moderate",
+    "sdoh": {
+      "race_ethnicity": "Non-Hispanic Black",
+      "insurance": "Medicaid / CHIP",
+      "food_insecure": true,
+      "rural": false,
+      "housing_instability": false,
+      "late_prenatal_care": false,
+      "sdoh_burden": 5
+    }
+  },
+  {
+    "id": 13,
+    "gestational_age_weeks": 34,
+    "systolic_bp": 143,
+    "diastolic_bp": 94,
+    "heart_rate": 82,
+    "symptoms": ["none"],
+    "prior_preeclampsia": false,
+    "ground_truth": "moderate",
+    "sdoh": {
+      "race_ethnicity": "Hispanic or Latina",
+      "insurance": "Uninsured",
+      "food_insecure": false,
+      "rural": true,
+      "housing_instability": false,
+      "late_prenatal_care": true,
+      "sdoh_burden": 7
+    }
+  },
+  {
+    "id": 14,
+    "gestational_age_weeks": 22,
+    "systolic_bp": 139,
+    "diastolic_bp": 90,
+    "heart_rate": 79,
+    "symptoms": ["mild headache"],
+    "prior_preeclampsia": false,
+    "ground_truth": "moderate",
+    "sdoh": {
+      "race_ethnicity": "Non-Hispanic Black",
+      "insurance": "Uninsured",
+      "food_insecure": true,
+      "rural": true,
+      "housing_instability": true,
+      "late_prenatal_care": true,
+      "sdoh_burden": 11
+    }
+  },
+  {
+    "id": 15,
+    "gestational_age_weeks": 36,
+    "systolic_bp": 118,
+    "diastolic_bp": 75,
+    "heart_rate": 72,
+    "symptoms": ["none"],
+    "prior_preeclampsia": false,
+    "ground_truth": "low",
+    "sdoh": {
+      "race_ethnicity": "Non-Hispanic White",
+      "insurance": "Private insurance",
+      "food_insecure": false,
+      "rural": false,
+      "housing_instability": false,
+      "late_prenatal_care": false,
+      "sdoh_burden": 0
+    }
+  },
+  {
+    "id": 16,
+    "gestational_age_weeks": 28,
+    "systolic_bp": 112,
+    "diastolic_bp": 70,
+    "heart_rate": 68,
+    "symptoms": ["none"],
+    "prior_preeclampsia": false,
+    "ground_truth": "low",
+    "sdoh": {
+      "race_ethnicity": "Asian or Pacific Islander",
+      "insurance": "Private insurance",
+      "food_insecure": false,
+      "rural": false,
+      "housing_instability": false,
+      "late_prenatal_care": false,
+      "sdoh_burden": 0
+    }
+  },
+  {
+    "id": 17,
+    "gestational_age_weeks": 20,
+    "systolic_bp": 120,
+    "diastolic_bp": 78,
+    "heart_rate": 74,
+    "symptoms": ["mild fatigue"],
+    "prior_preeclampsia": false,
+    "ground_truth": "low",
+    "sdoh": {
+      "race_ethnicity": "Hispanic or Latina",
+      "insurance": "Medicaid / CHIP",
+      "food_insecure": false,
+      "rural": false,
+      "housing_instability": false,
+      "late_prenatal_care": false,
+      "sdoh_burden": 1
+    }
+  },
+  {
+    "id": 18,
+    "gestational_age_weeks": 32,
+    "systolic_bp": 116,
+    "diastolic_bp": 72,
+    "heart_rate": 70,
+    "symptoms": ["none"],
+    "prior_preeclampsia": false,
+    "ground_truth": "low",
+    "sdoh": {
+      "race_ethnicity": "Non-Hispanic White",
+      "insurance": "Private insurance",
+      "food_insecure": false,
+      "rural": true,
+      "housing_instability": false,
+      "late_prenatal_care": false,
+      "sdoh_burden": 1
+    }
+  },
+  {
+    "id": 19,
+    "gestational_age_weeks": 24,
+    "systolic_bp": 122,
+    "diastolic_bp": 76,
+    "heart_rate": 73,
+    "symptoms": ["mild fatigue", "ankle swelling"],
+    "prior_preeclampsia": false,
+    "ground_truth": "low",
+    "sdoh": {
+      "race_ethnicity": "Non-Hispanic Black",
+      "insurance": "Medicaid / CHIP",
+      "food_insecure": false,
+      "rural": false,
+      "housing_instability": false,
+      "late_prenatal_care": false,
+      "sdoh_burden": 3
+    }
+  },
+  {
+    "id": 20,
+    "gestational_age_weeks": 38,
+    "systolic_bp": 119,
+    "diastolic_bp": 74,
+    "heart_rate": 71,
+    "symptoms": ["none"],
+    "prior_preeclampsia": false,
+    "ground_truth": "low",
+    "sdoh": {
+      "race_ethnicity": "Non-Hispanic White",
+      "insurance": "Private insurance",
+      "food_insecure": false,
+      "rural": false,
+      "housing_instability": false,
+      "late_prenatal_care": false,
+      "sdoh_burden": 0
+    }
+  }
+]
