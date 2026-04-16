@@ -190,10 +190,10 @@ streamlit run app.py
 
 ---
 
-## Repository Structure
+```
 NurtureNet/
-├── evaluate.py                       # Two-layer evaluation harness
-├── app.py                            # Streamlit CHW interface
+├── evaluate.py              # Two-layer evaluation harness
+├── app.py                   # Streamlit CHW interface
 ├── data/
 │   ├── vignettes.json                # 20 vignettes with ground truth
 │   └── vignettes_tennessee.json      # 115 Tennessee vignettes, 23 ethnic groups
@@ -202,6 +202,7 @@ NurtureNet/
 ├── results/
 ├── requirements.txt
 └── README.md
+```
 
 ---
 
