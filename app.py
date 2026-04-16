@@ -1,6 +1,6 @@
-“””
+"""
 app.py — NurtureNet Community Health Worker Tool
-“””
+"""
 
 import streamlit as st
 import anthropic
@@ -8,15 +8,13 @@ import json
 import os
 
 st.set_page_config(
-page_title=“NurtureNet”,
-page_icon=“🌿”,
-layout=“centered”
+    page_title="NurtureNet",
+    page_icon="🌿",
+    layout="centered"
 )
 
 # ── Custom CSS ────────────────────────────────────────────────────
-
-st.markdown(”””
-
+st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap');
 
@@ -265,13 +263,10 @@ div[data-testid="stButton"] button:hover {
     transform: translateY(-1px) !important;
 }
 </style>
-
-“””, unsafe_allow_html=True)
+""", unsafe_allow_html=True)
 
 # ── Hero ──────────────────────────────────────────────────────────
-
-st.markdown(”””
-
+st.markdown("""
 <div class="hero">
     <p class="hero-subtitle">Vanderbilt DS 5690 · Spring 2026</p>
     <h1 class="hero-title">🌿 NurtureNet</h1>
@@ -283,71 +278,66 @@ st.markdown(”””
 """, unsafe_allow_html=True)
 
 # ── Patient vitals ────────────────────────────────────────────────
-
-st.markdown(’<p class="section-label">Patient Vitals</p>’, unsafe_allow_html=True)
+st.markdown('<p class="section-label">Patient Vitals</p>', unsafe_allow_html=True)
 col1, col2 = st.columns(2)
 with col1:
-sbp = st.number_input(“Systolic BP (mmHg)”, 70, 220, 120)
-dbp = st.number_input(“Diastolic BP (mmHg)”, 40, 140, 80)
-ga  = st.number_input(“Gestational age (weeks)”, 1, 42, 28)
+    sbp = st.number_input("Systolic BP (mmHg)", 70, 220, 120)
+    dbp = st.number_input("Diastolic BP (mmHg)", 40, 140, 80)
+    ga  = st.number_input("Gestational age (weeks)", 1, 42, 28)
 with col2:
-hr        = st.number_input(“Heart rate (bpm)”, 40, 140, 76)
-prev_pe   = st.checkbox(“Prior preeclampsia”)
-multiples = st.checkbox(“Multiple gestation”)
+    hr        = st.number_input("Heart rate (bpm)", 40, 140, 76)
+    prev_pe   = st.checkbox("Prior preeclampsia")
+    multiples = st.checkbox("Multiple gestation")
 
 # ── Symptoms ──────────────────────────────────────────────────────
-
-st.markdown(’<p class="section-label">Symptoms</p>’, unsafe_allow_html=True)
+st.markdown('<p class="section-label">Symptoms</p>', unsafe_allow_html=True)
 c1, c2 = st.columns(2)
 with c1:
-headache   = st.checkbox(“Severe headache”)
-vision     = st.checkbox(“Visual disturbances”)
-epigastric = st.checkbox(“Epigastric / upper right pain”)
+    headache   = st.checkbox("Severe headache")
+    vision     = st.checkbox("Visual disturbances")
+    epigastric = st.checkbox("Epigastric / upper right pain")
 with c2:
-edema   = st.checkbox(“Facial or hand swelling”)
-nausea  = st.checkbox(“Sudden nausea / vomiting”)
-no_symp = st.checkbox(“No symptoms”)
+    edema   = st.checkbox("Facial or hand swelling")
+    nausea  = st.checkbox("Sudden nausea / vomiting")
+    no_symp = st.checkbox("No symptoms")
 
 # ── Social context ────────────────────────────────────────────────
-
-st.markdown(’<p class="section-label">Social Context</p>’, unsafe_allow_html=True)
+st.markdown('<p class="section-label">Social Context</p>', unsafe_allow_html=True)
 col3, col4 = st.columns(2)
 with col3:
-race = st.selectbox(“Race/ethnicity”, [
-“Non-Hispanic White”,
-“Non-Hispanic Black”,
-“Hispanic or Latina”,
-“Asian or Pacific Islander”,
-“American Indian or Alaska Native”,
-“Other / prefer not to say”
-])
-insurance = st.selectbox(“Insurance”, [
-“Private insurance”,
-“Medicaid / CHIP”,
-“Uninsured”
-])
+    race = st.selectbox("Race/ethnicity", [
+        "Non-Hispanic White",
+        "Non-Hispanic Black",
+        "Hispanic or Latina",
+        "Asian or Pacific Islander",
+        "American Indian or Alaska Native",
+        "Other / prefer not to say"
+    ])
+    insurance = st.selectbox("Insurance", [
+        "Private insurance",
+        "Medicaid / CHIP",
+        "Uninsured"
+    ])
 with col4:
-food_insecure = st.checkbox(“Food insecure”)
-rural         = st.checkbox(“Rural area”)
-housing       = st.checkbox(“Housing instability”)
-late_care     = st.checkbox(“Late or no prenatal care”)
+    food_insecure = st.checkbox("Food insecure")
+    rural         = st.checkbox("Rural area")
+    housing       = st.checkbox("Housing instability")
+    late_care     = st.checkbox("Late or no prenatal care")
 
 # ── SDOH score ────────────────────────────────────────────────────
-
 sdoh_burden = (
-int(food_insecure) * 2 +
-int(housing) * 2 +
-int(late_care) * 3 +
-int(rural) * 1 +
-(3 if insurance == “Uninsured” else 1 if insurance == “Medicaid / CHIP” else 0) +
-(2 if race == “Non-Hispanic Black” else 0)
+    int(food_insecure) * 2 +
+    int(housing) * 2 +
+    int(late_care) * 3 +
+    int(rural) * 1 +
+    (3 if insurance == "Uninsured" else 1 if insurance == "Medicaid / CHIP" else 0) +
+    (2 if race == "Non-Hispanic Black" else 0)
 )
 
-burden_level = “Low” if sdoh_burden <= 3 else “Moderate” if sdoh_burden <= 6 else “High” if sdoh_burden <= 9 else “Critical”
-burden_color_hex = “#16a34a” if sdoh_burden <= 3 else “#d97706” if sdoh_burden <= 6 else “#dc2626”
+burden_level = "Low" if sdoh_burden <= 3 else "Moderate" if sdoh_burden <= 6 else "High" if sdoh_burden <= 9 else "Critical"
+burden_color_hex = "#16a34a" if sdoh_burden <= 3 else "#d97706" if sdoh_burden <= 6 else "#dc2626"
 
-st.markdown(f”””
-
+st.markdown(f"""
 <div class="sdoh-card">
     <span class="sdoh-label">SDOH Burden Score</span>
     <span style="font-size:1.4rem; font-weight:700; color:{burden_color_hex}; font-family:'DM Serif Display',serif;">
@@ -358,35 +348,31 @@ st.markdown(f”””
 """, unsafe_allow_html=True)
 
 # ── Run ───────────────────────────────────────────────────────────
+if st.button("Run NurtureNet Assessment"):
 
-if st.button(“Run NurtureNet Assessment”):
+    symptoms = []
+    if headache:    symptoms.append("severe headache")
+    if vision:      symptoms.append("visual disturbances")
+    if epigastric:  symptoms.append("epigastric pain")
+    if edema:       symptoms.append("facial or hand swelling")
+    if nausea:      symptoms.append("sudden nausea or vomiting")
+    if multiples:   symptoms.append("multiple gestation")
+    if not symptoms or no_symp:
+        symptoms = ["none reported"]
 
-```
-symptoms = []
-if headache:    symptoms.append("severe headache")
-if vision:      symptoms.append("visual disturbances")
-if epigastric:  symptoms.append("epigastric pain")
-if edema:       symptoms.append("facial or hand swelling")
-if nausea:      symptoms.append("sudden nausea or vomiting")
-if multiples:   symptoms.append("multiple gestation")
-if not symptoms or no_symp:
-    symptoms = ["none reported"]
+    try:
+        with open("skill/SKILL.md") as f:
+            skill = f.read()
+    except:
+        skill = ""
 
-try:
-    with open("skill/SKILL.md") as f:
-        skill = f.read()
-except:
-    skill = ""
-
-prompt = f"""You are the NurtureNet constitutional AI reviewer for community health workers.
-```
+    prompt = f"""You are the NurtureNet constitutional AI reviewer for community health workers.
 
 PATIENT:
-
 - Gestational age: {ga} weeks
 - Blood pressure: {sbp}/{dbp} mmHg
 - Heart rate: {hr} bpm
-- Symptoms: {’, ’.join(symptoms)}
+- Symptoms: {', '.join(symptoms)}
 - Prior preeclampsia: {prev_pe}
 - Race/ethnicity: {race}
 - Insurance: {insurance}
@@ -400,119 +386,96 @@ NURTURENET CHW SKILL:
 {skill[:2000]}
 
 CONSTITUTIONAL PRINCIPLES:
-
 1. NEVER assess low risk when BP >= 140/90 mmHg
-1. Prior preeclampsia + ANY BP elevation = minimum moderate risk, always
-1. SDOH burden >= 7 must be explicitly flagged
-1. Non-Hispanic Black patients: heightened vigilance at ALL thresholds (3.15x mortality)
-1. Confidence < 0.7 on moderate/high = escalate
-1. Every output must give the CHW a specific action with a timeline
-1. Never discourage the patient from seeking care
+2. Prior preeclampsia + ANY BP elevation = minimum moderate risk, always
+3. SDOH burden >= 7 must be explicitly flagged
+4. Non-Hispanic Black patients: heightened vigilance at ALL thresholds (3.15x mortality)
+5. Confidence < 0.7 on moderate/high = escalate
+6. Every output must give the CHW a specific action with a timeline
+7. Never discourage the patient from seeking care
 
 Apply ACOG criteria and all constitutional principles. Return ONLY valid JSON:
 {{
-“risk_level”: “low” | “moderate” | “high”,
-“principles_violated”: [1, 2, 3],
-“equity_flag”: true | false,
-“equity_note”: “note or null”,
-“chw_action”: “specific action with timeline”,
-“what_to_say”: “exact plain-language script for CHW to read to patient”,
-“clinician_handoff”: “clinical summary if escalating, null if low risk”
-}}”””
+  "risk_level": "low" | "moderate" | "high",
+  "principles_violated": [1, 2, 3],
+  "equity_flag": true | false,
+  "equity_note": "note or null",
+  "chw_action": "specific action with timeline",
+  "what_to_say": "exact plain-language script for CHW to read to patient",
+  "clinician_handoff": "clinical summary if escalating, null if low risk"
+}}"""
 
-```
-with st.spinner("Running assessment..."):
-    try:
-        client = anthropic.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
-        response = client.messages.create(
-            model="claude-sonnet-4-20250514",
-            max_tokens=1200,
-            messages=[{"role": "user", "content": prompt}]
-        )
-        raw = response.content[0].text.strip()
-        raw = raw.replace("```json", "").replace("```", "").strip()
-        start = raw.find("{")
-        end = raw.rfind("}") + 1
-        result = json.loads(raw[start:end])
+    with st.spinner("Running assessment..."):
+        try:
+            client = anthropic.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
+            response = client.messages.create(
+                model="claude-sonnet-4-20250514",
+                max_tokens=1200,
+                messages=[{"role": "user", "content": prompt}]
+            )
+            raw = response.content[0].text.strip()
+            raw = raw.replace("```json", "").replace("```", "").strip()
+            start = raw.find("{")
+            end = raw.rfind("}") + 1
+            result = json.loads(raw[start:end])
 
-        risk = result.get("risk_level", "unknown").upper()
-        violations = result.get("principles_violated", [])
-        equity = result.get("equity_flag", False)
+            risk = result.get("risk_level", "unknown").upper()
+            violations = result.get("principles_violated", [])
+            equity = result.get("equity_flag", False)
 
-        risk_class = {"HIGH": "risk-high", "MODERATE": "risk-moderate", "LOW": "risk-low"}.get(risk, "risk-low")
-        risk_sub = {"HIGH": "Immediate action required", "MODERATE": "Close monitoring needed", "LOW": "Routine follow-up"}.get(risk, "")
+            risk_class = {"HIGH": "risk-high", "MODERATE": "risk-moderate", "LOW": "risk-low"}.get(risk, "risk-low")
+            risk_sub = {"HIGH": "Immediate action required", "MODERATE": "Close monitoring needed", "LOW": "Routine follow-up"}.get(risk, "")
 
-        st.markdown(f"""
-```
-
+            st.markdown(f"""
 <div class="{risk_class}">
     <p class="risk-label">{risk} RISK</p>
     <p class="risk-sub">{risk_sub}</p>
 </div>
 """, unsafe_allow_html=True)
 
-```
-        if violations:
-            st.markdown(f"""
-```
-
+            if violations:
+                st.markdown(f"""
 <div class="violation-card">
     ⚠️ <strong>Constitutional violations caught:</strong> principles {violations}
 </div>
 """, unsafe_allow_html=True)
 
-```
-        if equity and result.get("equity_note"):
-            st.markdown(f"""
-```
-
+            if equity and result.get("equity_note"):
+                st.markdown(f"""
 <div class="equity-card">
     🏳 <strong>Equity flag:</strong> {result['equity_note']}
 </div>
 """, unsafe_allow_html=True)
 
-```
-        if result.get("chw_action"):
-            st.markdown(f"""
-```
-
+            if result.get("chw_action"):
+                st.markdown(f"""
 <div class="output-card">
     <p class="output-card-label">CHW Action</p>
     <p class="output-card-text">{result['chw_action']}</p>
 </div>
 """, unsafe_allow_html=True)
 
-```
-        if result.get("what_to_say"):
-            st.markdown('<p class="section-label">What to say to the patient</p>', unsafe_allow_html=True)
-            st.markdown(f"""
-```
-
+            if result.get("what_to_say"):
+                st.markdown('<p class="section-label">What to say to the patient</p>', unsafe_allow_html=True)
+                st.markdown(f"""
 <div class="patient-script">
     "{result['what_to_say']}"
 </div>
 """, unsafe_allow_html=True)
 
-```
-        if result.get("clinician_handoff"):
-            st.markdown('<p class="section-label">Clinician Handoff Note</p>', unsafe_allow_html=True)
-            st.markdown(f"""
-```
-
+            if result.get("clinician_handoff"):
+                st.markdown('<p class="section-label">Clinician Handoff Note</p>', unsafe_allow_html=True)
+                st.markdown(f"""
 <div class="handoff-card">
     {result['clinician_handoff']}
 </div>
 """, unsafe_allow_html=True)
 
-```
-    except Exception as e:
-        st.error(f"Assessment error: {e}")
-```
+        except Exception as e:
+            st.error(f"Assessment error: {e}")
 
 # ── Footer ────────────────────────────────────────────────────────
-
-st.markdown(”””
-
+st.markdown("""
 <div class="footer">
     NurtureNet · DS 5690 Vanderbilt University 2026 · Mary Morkos<br>
     Not FDA cleared · Not a substitute for clinical judgment · All outputs advisory only
