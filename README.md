@@ -2,7 +2,7 @@
 ### Dual-Architecture Agentic Maternal Triage for Community Health Workers
 
 **Vanderbilt University — DS 5690: Gen AI Models in Theory & Practice, Spring 2026**
-**Mary Morkos** | MS Data Science (Health Informatics) | mary.morkos@vanderbilt.edu
+**Mary Morkos** | MS Data Science | mary.morkos@vanderbilt.edu
 
 ---
 
@@ -240,4 +240,4 @@ NurtureNet/
 
 *NurtureNet is a research prototype for DS 5690 at Vanderbilt University. Not FDA cleared. Not a substitute for clinical judgment. All outputs advisory only.*
 
-*Author: Mary Morkos, MS Data Science (Health Informatics), Vanderbilt University, May 2026*
+*Author: Mary Morkos, MS Data Science, Vanderbilt University, May 2026*
