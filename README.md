@@ -65,6 +65,8 @@ Clinician handoff document
 
 **Why two layers?** Phi-4-mini runs on any phone, requires no internet, and protects patient privacy. Claude handles high-stakes reasoning where constitutional safety principles and equity analysis matter most. The architecture matches computational resources to clinical stakes.
 
+> **Deployment note:** The live Streamlit app at [nurturenet.streamlit.app](https://nurturenet.streamlit.app) runs the NurtureNet CHW Skill via Claude only — Phi-4-mini requires a local Ollama server and runs via `evaluate.py`. The full two-layer pipeline is the research contribution; the deployed app is the CHW interface.
+
 **Why Phi-4-mini?** Scaling laws (Kaplan et al., 2020) show a large pretrained model quantized for edge deployment outperforms a smaller model trained from scratch. Phi-4-mini at Q4_K_M fits in 2.4GB and runs at 20-35 tok/s on a MacBook Air M1 — the same hardware profile as a mid-range Android phone. HealthSLM-Bench (Wang et al., 2025) found Phi-family models among the top performers for mobile health monitoring at 16x faster inference than large models.
 
 ---
