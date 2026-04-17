@@ -72,9 +72,27 @@ div[data-testid="stButton"] button {
 st.markdown("""
 <div class="hero">
     <p class="hero-subtitle">Vanderbilt DS 5690 · Spring 2026</p>
-    <h1 style="font-family: Georgia, serif; font-size: 3.5rem; color: #f9c5d1; margin: 0 0 6px 0; font-weight: 700; text-shadow: 2px 2px 12px rgba(0,0,0,0.6); letter-spacing: -1px; line-height: 1;">NurtureNet</h1>
-    <p class="hero-body">AI triage for community health workers conducting<br>between-visit maternal monitoring in Tennessee.</p>
+    <p class="hero-body" style="margin:0 0 4px 0;">AI triage for community health workers conducting between-visit maternal monitoring in Tennessee.</p>
     <span class="hero-badge">Advisory only · Not for direct patient use · Not FDA cleared</span>
+</div>
+""", unsafe_allow_html=True)
+ 
+# Title rendered outside hero so Streamlit cannot suppress it
+st.markdown("""
+<div style="margin-top:-20px; margin-bottom:20px; text-align:left; padding: 0 4px;">
+    <span style="
+        font-family: Georgia, 'Times New Roman', serif;
+        font-size: 4rem;
+        font-weight: 900;
+        color: #ffffff;
+        background: linear-gradient(135deg, #1a3a2a, #2d5a3d);
+        padding: 12px 28px;
+        border-radius: 12px;
+        display: inline-block;
+        letter-spacing: -2px;
+        line-height: 1;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    ">NurtureNet</span>
 </div>
 """, unsafe_allow_html=True)
  
@@ -294,4 +312,5 @@ st.markdown("""
     Not FDA cleared · Not a substitute for clinical judgment · All outputs advisory only
 </div>
 """, unsafe_allow_html=True)
+ 
  
