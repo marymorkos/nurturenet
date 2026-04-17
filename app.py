@@ -72,7 +72,7 @@ div[data-testid="stButton"] button {
 st.markdown("""
 <div class="hero">
     <p class="hero-subtitle">Vanderbilt DS 5690 · Spring 2026</p>
-    <h1 class="hero-title">NurtureNet</h1>
+    <h1 style="font-family: Georgia, serif; font-size: 3.5rem; color: #ffffff; margin: 0 0 6px 0; font-weight: 700; text-shadow: 2px 2px 8px rgba(0,0,0,0.8); letter-spacing: -1px; line-height: 1; -webkit-text-stroke: 1px rgba(255,255,255,0.3);">NurtureNet</h1>
     <p class="hero-body">AI triage for community health workers conducting<br>between-visit maternal monitoring in Tennessee.</p>
     <span class="hero-badge">Advisory only · Not for direct patient use · Not FDA cleared</span>
 </div>
