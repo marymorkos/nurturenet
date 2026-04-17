@@ -229,7 +229,7 @@ NurtureNet/
 
 **WhatsApp interface** — CHW texts patient info in plain language, NurtureNet responds in 30 seconds. Works on any phone, no app install, 2G cellular. Twilio WhatsApp API. In active development.
 
-**Bluetooth blood pressure integration** — FDA-cleared Bluetooth cuffs (iHealth Track, Omron) connect directly to the CHW phone. BP readings populate automatically at the moment of measurement. No manual entry, no transcription error, timestamped sensor data. One integration away from deployment.
+**Blood pressure hardware integration** — FDA-cleared connected cuffs (iHealth Track, Omron) link directly to the CHW phone via Bluetooth or USB-C. BP readings populate automatically at the moment of measurement — no manual entry, no transcription error, timestamped sensor data. The iHealth Track has an open API and costs approximately $35, meaning a CHW program can equip ten workers for $350. One integration away from deployment.
 
 **Tennessee evaluation** — Full evaluation across all 120 vignettes spanning 24 ethnic groups, including Nashville refugee communities (Somali, Kurdish, Burmese/Karen, Congolese, Guatemalan, Yemeni, Iraqi), Appalachian rural White families, and Cherokee Nation members in East Tennessee.
 
