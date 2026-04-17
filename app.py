@@ -72,29 +72,15 @@ div[data-testid="stButton"] button {
 st.markdown("""
 <div class="hero">
     <p class="hero-subtitle">Vanderbilt DS 5690 · Spring 2026</p>
-    <p class="hero-body" style="margin:0 0 4px 0;">AI triage for community health workers conducting between-visit maternal monitoring in Tennessee.</p>
+    <svg width="480" height="80" viewBox="0 0 480 80" xmlns="http://www.w3.org/2000/svg" style="display:block; margin: 0 0 12px -4px;">
+      <text x="0" y="68" font-family="Georgia, serif" font-size="72" font-weight="900" fill="#ffffff" letter-spacing="-2">NurtureNet</text>
+    </svg>
+    <p class="hero-body" style="margin:0 0 16px 0;">AI triage for community health workers conducting between-visit maternal monitoring in Tennessee.</p>
     <span class="hero-badge">Advisory only · Not for direct patient use · Not FDA cleared</span>
 </div>
 """, unsafe_allow_html=True)
  
-# Title rendered outside hero so Streamlit cannot suppress it
-st.markdown("""
-<div style="margin-top:-20px; margin-bottom:20px; text-align:left; padding: 0 4px;">
-    <span style="
-        font-family: Georgia, 'Times New Roman', serif;
-        font-size: 4rem;
-        font-weight: 900;
-        color: #ffffff;
-        background: linear-gradient(135deg, #1a3a2a, #2d5a3d);
-        padding: 12px 28px;
-        border-radius: 12px;
-        display: inline-block;
-        letter-spacing: -2px;
-        line-height: 1;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-    ">NurtureNet</span>
-</div>
-""", unsafe_allow_html=True)
+ 
  
 # Help guide
 with st.expander("How to use NurtureNet"):
@@ -312,5 +298,4 @@ st.markdown("""
     Not FDA cleared · Not a substitute for clinical judgment · All outputs advisory only
 </div>
 """, unsafe_allow_html=True)
- 
  
